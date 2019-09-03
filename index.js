@@ -38,40 +38,76 @@ app.get('/status', (request,response) => {
 });
 
 app.post('/register', (request,response) => {
-  let username = request.headers.username;
-  let password = request.headers.password;
+  
+  const username = request.headers.username;
+  const password = request.headers.password;
 
   let result = {
     'error': '',
     'message': ''
   }
 
-  if(username == undefined || username == null || password == undefined || password == null ) {
-    result.error = 'Invalid Headers'
+  validateUsernameAndPassword(username, password, result);
+  if(result.error !== '') {
     response.status(500).json(result);
     return;
   }
 
-  if(!isWordAppropriate(username)) {
-    result.error = 'Username contains inappropriate words'
-    response.status(500).json(result);
-    return;
-  }
+  user.registerUser(usersCollection, username, password, (isSuccessful, callbackObject) => {
+    if(!isSuccessful) {
+      result.error = callbackObject
+      response.status(500).json(result);
+      return
+    }
 
-  user.registerUser(usersCollection, username, password, (isSuccessful, result) => {
-    console.log(isSuccessful)
-    console.log(result)
+    result.message = callbackObject;
+    response.status(200).json(result);
+    return
   });
-
-  result.message = 'User has been registered'
-  response.status(200).json(result);
 });
 
 app.post('/login', (request,response) => {
-  response.status(200).json('NOT IMPLEMENTED');
+
+  const username = request.headers.username;
+  const password = request.headers.password;
+
+  let result = {
+    'error': '',
+    'message': ''
+  }
+
+  validateUsernameAndPassword(username, password, result);
+  if(result.error !== '') {
+    response.status(500).json(result);
+    return;
+  }
+
+  user.authenticateUser(usersCollection, username, password, (isSuccessful) => {
+    if(!isSuccessful) {
+      result.error = 'Internal server error'
+      response.status(500).json(result);
+      return
+    }
+
+    result.message = 'user authenticated';
+    response.status(200).json(result);
+    return;
+  })
 });
 
 // helper functions
+const stringifyQuery = (input) => {
+  
+}
+
+const validateUsernameAndPassword = (username, password, result) => {
+  if(username == undefined || username == null || password == undefined || password == null ) {
+    result.error = 'Invalid Headers'
+  } else if (!isWordAppropriate(username)) {
+    result.error = 'Username contains inappropriate words'
+  }
+}
+
 const isWordAppropriate = (input) => {
   return filter.clean(input) == input
 }

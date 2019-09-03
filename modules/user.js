@@ -3,7 +3,44 @@ const { sha256 } = require('crypto-hash');
 
 let collection = null;
 
-// export main functions used in route
+const addUserAndPassword = (username, password, callback) => {
+  
+  const newUser = {
+    'username': username,
+    'password': password
+  }
+
+  collection.findOne({'username': username}).then( result => {
+    if(result != null) {
+      callback(false, 'Username is taken')
+    } else {
+      collection.bulkWrite([
+        { insertOne: { document: newUser }}
+      ]).then(
+        writeResults => callback(true, writeResults.insertedIds[0]),
+        error => callback(false, `Internal Server Error ${error}`)
+      )
+    }
+  });
+}
+
+const findUser = (username, password, callback) => {
+
+  const userDetails = {
+    'username': username,
+    'password': password
+  }
+
+  collection.findOne({userDetails}).then(
+    result => { 
+      console.log(result);
+      callback(result == null ? false : true);
+    },
+    error => callback(false)
+  );
+}
+
+// export main functions used in routes
 exports.registerUser = (userCollection, username, password, callback) => {
   collection = userCollection;
 
@@ -13,25 +50,11 @@ exports.registerUser = (userCollection, username, password, callback) => {
   );
 }
 
-const addUserAndPassword = (username, password, callback) => {
-  
-  const newUser = {
-    'username': username,
-    'password': password
-  }
+exports.authenticateUser = (userCollection, username, password, callback) => {
+  collection = userCollection;
 
-  collection.findOne({'username': username}, 'username').then( result => {
-    if(result != null) {
-      callback(false, 'Username is taken')
-    } else {
-      collection.insert(newUser).then( 
-        insertedUser => callback(true, insertedUser),
-        error => callback(false, `Internal Server Error ${error}`)
-      )
-    }
-  });
-}
-
-exports.authenticateUser = (username, password) => {
-
+  sha256(password).then(
+    result => findUser(username, result, callback),
+    error => callback(false)
+  );
 }
