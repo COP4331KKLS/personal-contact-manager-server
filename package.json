@@ -1,0 +1,28 @@
+{
+  "name": "personal-contact-manager-server",
+  "version": "1.0.0",
+  "description": "Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/COP4331KKLS/personal-contact-manager-server.git"
+  },
+  "keywords": [
+    "mongodb",
+    "node.js",
+    "oauth"
+  ],
+  "author": "Kevin Rabinowitz, Lloyd Dapaah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/COP4331KKLS/personal-contact-manager-server/issues"
+  },
+  "homepage": "https://github.com/COP4331KKLS/personal-contact-manager-server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
