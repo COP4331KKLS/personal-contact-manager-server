@@ -10,7 +10,12 @@ const user = require('./modules/user');
 
 // listening ports
 const listeningPort = process.env.PORT || 5000;
-const databasePort = 'mongodb://heroku_k51r40kk:8muna9n1vna2nog2i9purtgc29@ds017173.mlab.com:17173/heroku_k51r40kk';
+const databasePort = process.env.MONGODB_URI;
+
+if(databasePort == undefined || databasePort == null) {
+  console.log("MONGODB_URI is missing")
+  return 1;
+} 
 
 const app = express();
 const filter = new WordFilter();
