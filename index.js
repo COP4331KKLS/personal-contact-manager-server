@@ -6,7 +6,7 @@ const WordFilter = require('bad-words');
 
 // local modules
 const user = require('./modules/user');
-const controllerRouter = require('./routes/contacts');
+const contactsRouter = require('./routes/contacts');
 
 // listening ports
 const listeningPort = process.env.PORT || 5000;
@@ -33,7 +33,7 @@ app.use(express.json());
 app.enable("trust proxy");
 
 // routes
-app.use('/contacts', controllerRouter);	
+app.use('/contacts', contactsRouter);	
 
 app.get('/status', (request,response) => {
   response.status(200).json(`Server Live: ${Date.now()}`);
