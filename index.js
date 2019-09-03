@@ -1,5 +1,7 @@
 
 const express = require('express');
+const user = require('./modules/user');
+
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -9,11 +11,12 @@ app.get('/status', (request,response) => {
 });
 
 app.post('/register', (request,response) => {
-  response.status(200).json('NOT IMPLEMENTED')
+  user.registerUser('user', '123');
+  response.status(200).json('NOT IMPLEMENTED');
 });
 
 app.post('/login', (request,response) => {
-  response.status(200).json('NOT IMPLEMENTED')
+  response.status(200).json('NOT IMPLEMENTED');
 });
 
 app.listen(port, () => {
