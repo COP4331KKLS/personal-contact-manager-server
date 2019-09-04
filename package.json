@@ -23,6 +23,10 @@
   },
   "homepage": "https://github.com/COP4331KKLS/personal-contact-manager-server#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "bad-words": "^3.0.3",
+    "cors": "^2.8.5",
+    "crypto-hash": "^1.2.2",
+    "express": "^4.17.1",
+    "monk": "^7.0.0"
   }
 }
