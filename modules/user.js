@@ -28,8 +28,8 @@ const addUserAndPassword = (username, password, callback) => {
 
 const findUser = (username, password, callback) => {
   collection.findOne({'username': username, 'password': password}).then(
-    result => callback(result == null ? false : true),
-    error => callback(false)
+    result => callback(result == null ? false : true, result == null ? 'User not found' : result._id),
+    error => callback(false, `User not found: ${error}`)
   );
 }
 
@@ -48,6 +48,6 @@ exports.authenticateUser = (userCollection, username, password, callback) => {
 
   sha256(password).then(
     result => findUser(username, result, callback),
-    error => callback(false)
+    error => callback(false, `User not found: ${error}`)
   );
 }

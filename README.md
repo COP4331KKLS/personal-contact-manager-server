@@ -11,3 +11,23 @@
 
 ### Accessing Database
 - Monk is a node package that makes it easier to use mongodb. For interaction like adding, reading, updating, etc, refer to the monk documentation [HERE](https://automattic.github.io/monk/).
+
+### Endpoints
+All endpoints have a base URL of **https://personal-contacts-manager.herokuapp.com**
+
+#### Authentication
+##### Register User
+| Request Component  | Specification                              |
+|--------|--------------------------------------------------------|
+| Route  | "/register"                                            |
+| Method | POST                                                   |
+| Query  | None                                                   |
+| Header | { username: `username`, password: `password`}.         |
+  
+##### Login User
+| Request Component  | Specification                              |
+|--------|--------------------------------------------------------|
+| Route  | "/login".                                              |
+| Method | POST                                                   |
+| Query  | None                                                   |
+| Header | { username: `username`, password: `password`}.         |
