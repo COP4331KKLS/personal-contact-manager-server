@@ -4,7 +4,6 @@ const { sha256 } = require('crypto-hash');
 let collection = null;
 
 const addUserAndPassword = (username, password, callback) => {
-  
   const newUser = {
     'username': username,
     'password': password
@@ -14,8 +13,11 @@ const addUserAndPassword = (username, password, callback) => {
     if(result != null) {
       callback(false, 'Username is taken')
     } else {
-      collection.bulkWrite([
-        { insertOne: { document: newUser }}
+      collection.bulkWrite([{ 
+          insertOne: { 
+            document: newUser 
+          }
+        }
       ]).then(
         writeResults => callback(true, writeResults.insertedIds[0]),
         error => callback(false, `Internal Server Error ${error}`)
@@ -25,17 +27,8 @@ const addUserAndPassword = (username, password, callback) => {
 }
 
 const findUser = (username, password, callback) => {
-
-  const userDetails = {
-    'username': username,
-    'password': password
-  }
-
-  collection.findOne({userDetails}).then(
-    result => { 
-      console.log(result);
-      callback(result == null ? false : true);
-    },
+  collection.findOne({'username': username, 'password': password}).then(
+    result => callback(result == null ? false : true),
     error => callback(false)
   );
 }

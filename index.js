@@ -53,7 +53,7 @@ app.post('/register', (request,response) => {
     return;
   }
 
-  user.registerUser(usersCollection, username, password, (isSuccessful, callbackObject) => {
+  user.registerUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful, callbackObject) => {
     if(!isSuccessful) {
       result.error = callbackObject
       response.status(500).json(result);
@@ -82,24 +82,20 @@ app.post('/login', (request,response) => {
     return;
   }
 
-  user.authenticateUser(usersCollection, username, password, (isSuccessful) => {
+  user.authenticateUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful) => {
     if(!isSuccessful) {
-      result.error = 'Internal server error'
-      response.status(500).json(result);
+      result.error = 'User not found'
+      response.status(401).json(result);
       return
     }
 
-    result.message = 'user authenticated';
+    result.message = 'User authenticated';
     response.status(200).json(result);
     return;
   })
 });
 
 // helper functions
-const stringifyQuery = (input) => {
-  
-}
-
 const validateUsernameAndPassword = (username, password, result) => {
   if(username == undefined || username == null || password == undefined || password == null ) {
     result.error = 'Invalid Headers'
