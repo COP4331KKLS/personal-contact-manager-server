@@ -82,14 +82,14 @@ app.post('/login', (request,response) => {
     return;
   }
 
-  user.authenticateUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful) => {
+  user.authenticateUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful, callbackObject) => {
     if(!isSuccessful) {
-      result.error = 'User not found'
+      result.error = callbackObject
       response.status(401).json(result);
       return
     }
 
-    result.message = 'User authenticated';
+    result.message = callbackObject;
     response.status(200).json(result);
     return;
   })
