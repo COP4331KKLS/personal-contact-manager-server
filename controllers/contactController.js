@@ -1,3 +1,10 @@
+exports.authenticate_user = function(req, res, next) {
+	if (!req.headers.authorization) {
+		return res.status(403).json({error: 'No credentials sent.'});
+	}
+	next();
+};
+
 exports.contacts_list = function(req, res) {
 	res.send('NOT IMPLEMENTED: Contact list');
 };
