@@ -6,7 +6,7 @@ const WordFilter = require('bad-words');
 
 // local modules
 const user = require('./modules/user');
-const contactsRouter = require('./routes/contacts');
+const controllerRouter = require('./routes/contacts');
 
 // listening ports
 const listeningPort = process.env.PORT || 5000;
@@ -32,8 +32,14 @@ app.use(cors());
 app.use(express.json());
 app.enable("trust proxy");
 
+// Make db accessible to router
+app.use(function(req, res, next) {
+	req.database = database;
+	next();
+});
+
 // routes
-app.use('/contacts', contactsRouter);	
+app.use('/contacts', controllerRouter);	
 
 app.get('/status', (request,response) => {
   response.status(200).json(`Server Live: ${Date.now()}`);
