@@ -5,14 +5,43 @@ exports.authenticate_user = function(req, res, next) {
 	next();
 };
 
+// Get contacts
 exports.contacts_list = function(req, res) {
-	res.send('NOT IMPLEMENTED: Contact list');
+	const db = req.database;
+	const collection = db.get('user-list');
+	collection.findOne(_id: req.headers.authorization, function(err, obj) {
+		res.json(obj);
+	});
 };
 
+// Add contact
 exports.contact_create = function(req, res) {
-	res.send('NOT IMPLEMENTED: Contact create');
+	const db = req.database;
+	const collection = db.get('user-list');
+	collection.update(
+		{_id: req.headers.authorization},
+		{
+			$push: {
+				contacts: {
+					name: req.body.name, phone-number: req.body.phoneNumber, email: req.body.email
+				}
+			}
+		}
+	);
 };
 
+// Delete contact
 exports.contact_delete = function(req, res) {
-	res.send('NOT IMPLEEMENTED: Contact delete');
+	const db = req.database;
+	const collection = db.get('user-list');
+	collection.update(
+		{_id: req.headers.authorization},
+		{
+			$pull: {
+				contacts: {
+					name: req.body.name, phone-number: req.body.phone-number
+				}
+			}
+		}
+	);
 };
