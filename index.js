@@ -5,12 +5,13 @@ const express = require('express');
 const WordFilter = require('bad-words');
 
 // local modules
-const user = require('./modules/user');
 const controllerRouter = require('./routes/contacts');
 
 // listening ports
 const listeningPort = process.env.PORT || 5000;
-const databasePort = process.env.MONGODB_URI;
+const databasePort = process.env.MONGODB_URI || 'localhost:27017/test';
+const database = monk(databasePort);
+
 
 if(databasePort == undefined || databasePort == null) {
   console.log("MONGODB_URI is missing")
@@ -19,13 +20,15 @@ if(databasePort == undefined || databasePort == null) {
 
 const app = express();
 const filter = new WordFilter();
-const database = monk(databasePort);
+//const database = monk(databasePort);
 
 // collections
 const userCollectionsName = 'users';
 const contactsCollectionName = 'contacts';
 const usersCollection = database.get(userCollectionsName);
 const contactsCollection = database.get(contactsCollectionName);
+
+const user = require('./modules/user');
 
 // setup express app
 app.use(cors());
@@ -46,13 +49,76 @@ app.get('/status', (request,response) => {
 });
 
 app.post('/register', (request,response) => {
-  user.registerUser('user', '123');
-  response.status(200).json('NOT IMPLEMENTED');
+  
+  const username = request.headers.username;
+  const password = request.headers.password;
+
+  let result = {
+    'error': '',
+    'message': ''
+  }
+
+  validateUsernameAndPassword(username, password, result);
+  if(result.error !== '') {
+    response.status(500).json(result);
+    return;
+  }
+
+  user.registerUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful, callbackObject) => {
+    if(!isSuccessful) {
+      result.error = callbackObject
+      response.status(500).json(result);
+      return
+    }
+
+    result.message = callbackObject;
+    response.status(200).json(result);
+    return
+  });
 });
 
+
 app.post('/login', (request,response) => {
-  response.status(200).json('NOT IMPLEMENTED');
+
+  const username = request.headers.username;
+  const password = request.headers.password;
+
+  let result = {
+    'error': '',
+    'message': ''
+  }
+
+  validateUsernameAndPassword(username, password, result);
+  if(result.error !== '') {
+    response.status(500).json(result);
+    return;
+  }
+
+  user.authenticateUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful, callbackObject) => {
+    if(!isSuccessful) {
+      result.error = callbackObject
+      response.status(401).json(result);
+      return
+    }
+
+    result.message = callbackObject;
+    response.status(200).json(result);
+    return;
+  })
 });
+
+// helper functions
+const validateUsernameAndPassword = (username, password, result) => {
+  if(username == undefined || username == null || password == undefined || password == null ) {
+    result.error = 'Invalid Headers'
+  } else if (!isWordAppropriate(username)) {
+    result.error = 'Username contains inappropriate words'
+  }
+}
+
+const isWordAppropriate = (input) => {
+  return filter.clean(input) == input
+}
 
 // start application
 app.listen(listeningPort, () => {
