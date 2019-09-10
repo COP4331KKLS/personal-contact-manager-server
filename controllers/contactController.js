@@ -1,15 +1,19 @@
 exports.authenticate_user = function(req, res, next) {
+exports.authenticate_user = function(req, res, next) {
+
 	if (!req.headers.authorization) {
 		return res.status(403).json({error: 'No credentials sent.'});
 	}
+	
 	next();
 };
 
 // Get contacts
 exports.contacts_list = function(req, res) {
 	const db = req.database;
-	const collection = db.get('user-list');
-	collection.findOne(_id: req.headers.authorization, function(err, obj) {
+	const collection = db.get('users');
+	
+	collection.findOne({_id: req.headers.authorization}, {projection:{contacts: true}}, function(err, obj) {
 		res.json(obj);
 	});
 };
@@ -17,31 +21,37 @@ exports.contacts_list = function(req, res) {
 // Add contact
 exports.contact_create = function(req, res) {
 	const db = req.database;
-	const collection = db.get('user-list');
+	const collection = db.get('users');
 	collection.update(
 		{_id: req.headers.authorization},
 		{
 			$push: {
 				contacts: {
-					name: req.body.name, phone-number: req.body.phoneNumber, email: req.body.email
+					name: req.body.name, phoneNumber: req.body.phoneNumber, email: req.body.email
 				}
 			}
-		}
-	);
+		}, function (err, result) {
+			res.send(
+      			(err === null) ? { msg: '' } : { msg: err }
+    			);
+	});
 };
 
 // Delete contact
 exports.contact_delete = function(req, res) {
 	const db = req.database;
-	const collection = db.get('user-list');
+	const collection = db.get('users');
 	collection.update(
 		{_id: req.headers.authorization},
 		{
 			$pull: {
 				contacts: {
-					name: req.body.name, phone-number: req.body.phone-number
+					name: req.body.name, phoneNumber: req.body.phone-number
 				}
 			}
-		}
-	);
+		}, function (err, result) {
+			res.send(
+				(err === null) ? { msg: '' } : { msg: err }
+			);
+	});
 };
