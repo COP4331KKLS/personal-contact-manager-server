@@ -1,4 +1,3 @@
-
 const { sha256 } = require('crypto-hash');
 
 let collection = null;
