@@ -4,7 +4,7 @@
   "description": "Server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nodemon index.js",
     "start": "node index.js"
   },
   "repository": {
@@ -28,5 +28,8 @@
     "crypto-hash": "^1.2.2",
     "express": "^4.17.1",
     "monk": "^7.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
   }
 }
