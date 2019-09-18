@@ -3,10 +3,9 @@
 const cors = require('cors');
 const monk = require('monk');
 const express = require('express');
-const WordFilter = require('bad-words');
 
 // local modules
-const user = require('./modules/user');
+const userRoute = require('./routes/user');
 
 // listening ports
 const listeningPort = process.env.PORT || 5000;
@@ -18,95 +17,22 @@ if(databasePort == undefined || databasePort == null) {
 } 
 
 const app = express();
-const filter = new WordFilter();
 const database = monk(databasePort);
 
 // collections
 const userCollectionsName = 'users';
-const contactsCollectionName = 'contacts';
 const usersCollection = database.get(userCollectionsName);
-const contactsCollection = database.get(contactsCollectionName);
 
 // setup express app
 app.use(cors());
 app.use(express.json());
 app.enable("trust proxy");
 
-// routes
-app.get('/status', (request,response) => {
-  response.status(200).json(`Server Live${request.url}: ${Date.now()}`);
-});
+// authentication routes
+userRoute.registerPost(app, usersCollection);
+userRoute.loginPost(app, usersCollection);
 
-app.post('/register', (request,response) => {
-  
-  const username = request.headers.username;
-  const password = request.headers.password;
-
-  let result = {
-    'error': '',
-    'message': ''
-  }
-
-  validateUsernameAndPassword(username, password, result);
-  if(result.error !== '') {
-    response.status(500).json(result);
-    return;
-  }
-
-  user.registerUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful, callbackObject) => {
-    if(!isSuccessful) {
-      result.error = callbackObject
-      response.status(500).json(result);
-      return
-    }
-
-    result.message = callbackObject;
-    response.status(200).json(result);
-    return
-  });
-});
-
-app.post('/login', (request,response) => {
-
-  const username = request.headers.username;
-  const password = request.headers.password;
-
-  let result = {
-    'error': '',
-    'message': ''
-  }
-
-  validateUsernameAndPassword(username, password, result);
-  if(result.error !== '') {
-    response.status(500).json(result);
-    return;
-  }
-
-  user.authenticateUser(usersCollection, JSON.stringify(username), JSON.stringify(password), (isSuccessful, callbackObject) => {
-    if(!isSuccessful) {
-      result.error = callbackObject
-      response.status(401).json(result);
-      return
-    }
-
-    result.message = callbackObject;
-    response.status(200).json(result);
-    return;
-  })
-});
-
-// helper functions
-const validateUsernameAndPassword = (username, password, result) => {
-  if(username == undefined || username == null || password == undefined || password == null ) {
-    result.error = 'Invalid Headers'
-  } else if (!isWordAppropriate(username)) {
-    result.error = 'Username contains inappropriate words'
-  }
-}
-
-const isWordAppropriate = (input) => {
-  return filter.clean(input) == input
-}
+// contact routes
 
 // start application
 app.listen(listeningPort, () => {
