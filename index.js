@@ -3,6 +3,8 @@ const cors = require('cors');
 const monk = require('monk');
 const express = require('express');
 const WordFilter = require('bad-words');
+const bodyParser = require('body-parser')
+
 
 // local modules
 const controllerRouter = require('./routes/contacts');
@@ -20,7 +22,6 @@ if(databasePort == undefined || databasePort == null) {
 
 const app = express();
 const filter = new WordFilter();
-//const database = monk(databasePort);
 
 // collections
 const userCollectionsName = 'users';
@@ -33,6 +34,7 @@ const user = require('./modules/user');
 // setup express app
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }))
 app.enable("trust proxy");
 
 // Make db accessible to router
@@ -52,7 +54,7 @@ app.post('/register', (request,response) => {
   
   const username = request.headers.username;
   const password = request.headers.password;
-
+  
   let result = {
     'error': '',
     'message': ''
