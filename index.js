@@ -1,4 +1,3 @@
-
 // middleware
 const cors = require('cors');
 const monk = require('monk');
@@ -28,11 +27,18 @@ app.use(cors());
 app.use(express.json());
 app.enable("trust proxy");
 
+// Make db accessible to router
+app.use(function(req, res, next) {
+	req.database = database;
+	next();
+});
+
+// contact routes
+app.use('/contacts', controllerRouter);	
+
 // authentication routes
 userRoute.registerPost(app, usersCollection);
 userRoute.loginPost(app, usersCollection);
-
-// contact routes
 
 // start application
 app.listen(listeningPort, () => {
