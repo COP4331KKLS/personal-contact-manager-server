@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const contactsController = require('../controllers/contactController');
+const contactsController = require('../controllers/contactsController');
 
 // GET request for list of all Contacts
 router.get('/getContactsList', contactsController.authenticate_user, contactsController.contacts_list);
