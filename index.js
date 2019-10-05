@@ -5,6 +5,7 @@ const express = require('express');
 
 // local modules
 const userRoute = require('./routes/user');
+const controllerRouter = require('./routes/contacts');
 
 // listening ports
 const listeningPort = process.env.PORT || 5000;

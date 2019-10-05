@@ -44,6 +44,7 @@ exports.contact_search = function(req, res) {
 exports.contact_create = function(req, res) {
 	const db = req.database;
 	const collection = db.get('users');
+	
 	collection.update(
 		{_id: monk.id(req.headers.authorization)},
 		{
