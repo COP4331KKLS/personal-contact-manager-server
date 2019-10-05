@@ -29,7 +29,8 @@ exports.registerPost = (app, usersCollection) => {
         return
       }
   
-      result.message = callbackObject;
+      result.message = "User registration successful";
+      response.cookie('authorization', callbackObject, {maxAge: 1800000});
       response.status(200).json(result);
       return
     });
@@ -61,11 +62,19 @@ exports.loginPost = (app, usersCollection) => {
         return
       }
   
-      result.message = callbackObject;
+      result.message = "User login successful";
+      response.cookie('authorization', callbackObject, {maxAge: 1800000});
       response.status(200).json(result);
       return;
     })
   });
+}
+
+exports.logoutPost = (app) => {
+  app.post('/logout', (request,response) => {
+    response.clearCookie('authorization');
+    response.status(200).send('User logout successful');
+  })
 }
 
 // helper functions

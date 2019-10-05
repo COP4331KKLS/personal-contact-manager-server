@@ -2,6 +2,7 @@
 const cors = require('cors');
 const monk = require('monk');
 const express = require('express');
+const cookieParser = require('cookie-parser');
 
 // local modules
 const userRoute = require('./routes/user');
@@ -26,6 +27,7 @@ const usersCollection = database.get(userCollectionsName);
 // setup express app
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.enable("trust proxy");
 
 // Make db accessible to router
@@ -40,6 +42,7 @@ app.use('/contacts', controllerRouter);
 // authentication routes
 userRoute.registerPost(app, usersCollection);
 userRoute.loginPost(app, usersCollection);
+userRoute.logoutPost(app);
 
 // start application
 app.listen(listeningPort, () => {
