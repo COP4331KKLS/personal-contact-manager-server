@@ -6,7 +6,6 @@ exports.authenticate_user = function(req, res, next) {
 		return res.status(403).json({error: 'No credentials sent.'});
 	}
 	
-	
 	next();
 };
 
@@ -34,7 +33,10 @@ exports.contact_search = function(req, res) {
 		{$match: 	
 			{$or: [
 				{'contacts.phoneNumber':regex},
-				{'contacts.name':regex},
+				{'contacts.firstName':regex},
+				{'contacts.lastName':regex},
+				{'contacts.address':regex},
+				{'contacts.company':regex},
 				{'contacts.email':regex} ]
 			}
 		}], function(err, obj) {res.json(obj)}
@@ -48,9 +50,21 @@ exports.contact_create = function(req, res) {
 	collection.update(
 		{_id: monk.id(req.headers.authorization)},
 		{
+			
+			const firstName = req.body.firstName;
+			const lastName = req.body.lastName;
+			const phoneNumber = req.body.phoneNumber;
+			const email = req.body.email;
+			const address = req.body.address;
+			const company = req.body.company;
 			$push: {
 				contacts: {
-					name: req.body.name, phoneNumber: req.body.phoneNumber, email: req.body.email
+					'firstName': JSON.stringify(firstname), 
+					'lastName': JSON.stringify(lastName), 
+					'phoneNumber': JSON.stringify(phoneNumber), 
+					'email': JSON.stringify(email),
+					'address': JSON.stringify(address),
+					'company': JSON.stringify(company)
 				}
 			}
 		}, function (err, result) {
@@ -67,9 +81,21 @@ exports.contact_delete = function(req, res) {
 	collection.update(
 		{_id: monk.id(req.headers.authorization)},
 		{
+			const firstName = req.body.firstName;
+			const lastName = req.body.lastName;
+			const phoneNumber = req.body.phoneNumber;
+			const email = req.body.email;
+			const address = req.body.address;
+			const company = req.body.company;
+			
 			$pull: {
 				contacts: {
-					name: req.body.name, phoneNumber: req.body.phoneNumber, email: req.body.email
+					'firstName': JSON.stringify(firstname), 
+					'lastName': JSON.stringify(lastName), 
+					'phoneNumber': JSON.stringify(phoneNumber), 
+					'email': JSON.stringify(email),
+					'address': JSON.stringify(address),
+					'company': JSON.stringify(company)
 				}
 			}
 		}, function (err, result) {
