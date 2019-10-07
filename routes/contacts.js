@@ -9,6 +9,9 @@ router.get('/getContactsList', contactsController.authenticate_user, contactsCon
 // GET request for searching for Contact
 router.get('/searchContact', contactsController.authenticate_user, contactsController.contact_search);
 
+// POST request for editing Contact
+router.post('/editContact', contactsController.authenticate_user, contactsController.contact_edit);
+
 // POST request for creating Contact
 router.post('/addContact', contactsController.authenticate_user, contactsController.contact_create);
 
