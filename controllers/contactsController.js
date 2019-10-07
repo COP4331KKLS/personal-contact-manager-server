@@ -15,7 +15,7 @@ exports.contacts_list = function(req, res) {
 	const collection = db.get('users');
 	
 	collection.findOne({_id: monk.id(req.headers.authorization)}, function(err, obj) {
-		res.json(obj);
+		res.json(obj != null ? obj.contacts : 'null');
 	});
 };
 
