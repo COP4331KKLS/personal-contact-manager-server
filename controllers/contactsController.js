@@ -15,7 +15,7 @@ exports.contacts_list = function(req, res) {
 	const collection = db.get('users');
 	
 	collection.findOne({_id: monk.id(req.headers.authorization)}, function(err, obj) {
-		res.json(obj != null ? obj.contacts : 'null');
+		res.json(obj);
 	});
 };
 
@@ -45,12 +45,53 @@ exports.contact_search = function(req, res) {
 	);
 };
 
+// Edit contact
+exports.contact_edit = function(req, res) {
+	const db = req.database;
+	const collection = db.get('users');
+	const firstName = req.body.firstName;
+	const lastName = req.body.lastName;
+	const phoneNumber = req.body.phoneNumber;
+	const email = req.body.email;
+	const address = req.body.address;
+	const company = req.body.company;
+	
+	const editFirstName = req.body.editFirstName;
+	const editLastName = req.body.editLastName;
+	const editPhoneNumber = req.body.editPhoneNumber;
+	const editEmail = req.body.editEmail;
+	const editAddress = req.body.editAddress;
+	const editCompany = req.body.editCompany;
+	console.log(phoneNumber);
+	console.log(editPhoneNumber);
+	collection.update(
+		{_id: monk.id(req.headers.authorization),
+			contacts: {$elemMatch: {firstName: firstName, 
+				lastName: lastName, 
+				email: email, 
+				address: address, 
+				company: company, 
+				phoneNumber: phoneNumber}}},
+		{
+			$set: {"contacts.$.firstName": editFirstName, 
+				"contacts.$.lastName": editLastName, 
+				"contacts.$.email": editEmail, 
+				"contacts.$.address": editAddress, 
+				"contacts.$.company": editCompany,
+				"contacts.$.phoneNumber": editPhoneNumber
+			}
+		}, function (err, result) {
+				res.send(
+					(err === null) ? {msg: ''} : {msg: err}
+				);
+		});
+};
+
+
 // Add contact
 exports.contact_create = function(req, res) {
 	const db = req.database;
 	const collection = db.get('users');
-	console.log(req.headers.authorization);
-
 	const firstName = req.body.firstName;
 	const lastName = req.body.lastName;
 	const phoneNumber = req.body.phoneNumber;
@@ -87,6 +128,7 @@ exports.contact_delete = function(req, res) {
 	const email = req.body.email;
 	const address = req.body.address;
 	const company = req.body.company;
+	console.log(firstName);
 	collection.update(
 		{_id: monk.id(req.headers.authorization)},
 		{		
