@@ -63,7 +63,7 @@ exports.loginPost = (app, usersCollection) => {
       }
   
       result.message = "User login successful";
-      response.cookie('authorization', callbackObject, {maxAge: 1800000});
+      response.cookie('authorization', callbackObject, {httpOnly: false, maxAge: 1800000});
       response.status(200).json(result);
       return;
     })
